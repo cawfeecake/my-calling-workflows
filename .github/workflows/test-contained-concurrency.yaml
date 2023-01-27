@@ -1,0 +1,18 @@
+name: call-concurrency-test
+
+on:
+  workflow_dispatch:
+    inputs:
+      ENV:
+        type: choice
+        required: true
+        options:
+          - dev
+          - int
+          - prod
+
+jobs:
+  job0:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/contained-concurrency.yaml@main
+    with:
+      ENV: ${{ inputs.ENV }}
