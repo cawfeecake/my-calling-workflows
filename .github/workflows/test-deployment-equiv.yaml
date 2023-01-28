@@ -15,11 +15,13 @@ jobs:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
   job1:
+    needs: [ job0 ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
   job2:
+    needs: [ job1 ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
       CONCURRENCY_KEY: prod
