@@ -1,18 +1,26 @@
-name: call-concurrency-test
+name: multiple-sleep-calls
 
 on:
   workflow_dispatch:
     inputs:
-      ENV:
-        type: choice
+      DEPLOYMENT_TIME:
+        type: string
         required: true
-        options:
-          - dev
-          - int
-          - prod
+        default: 60
 
 jobs:
   job0:
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/contained-concurrency.yaml@main
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
-      ENV: ${{ inputs.ENV }}
+      CONCURRENCY_KEY: dev
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+  job1:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
+    with:
+      CONCURRENCY_KEY: int
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+  job2:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
+    with:
+      CONCURRENCY_KEY: prod
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
