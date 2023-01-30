@@ -1,4 +1,4 @@
-name: multiple-sleep-calls
+name: multiple-sleep-calls-with-concurrency
 
 concurrency:
   group: ${{ github.ref }}
