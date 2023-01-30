@@ -1,4 +1,8 @@
-name: multiple-sleep-calls
+name: multiple-sleep-calls-with-concurrency
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: false
 
 on:
   workflow_dispatch:
@@ -12,17 +16,17 @@ jobs:
   job0:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
-      ENVIRONMENT: dev
+      CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
   job1:
     needs: [ job0 ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
-      ENVIRONMENT: int
+      CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
   job2:
     needs: [ job1 ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
     with:
-      ENVIRONMENT: prod
+      CONCURRENCY_KEY: prod
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
