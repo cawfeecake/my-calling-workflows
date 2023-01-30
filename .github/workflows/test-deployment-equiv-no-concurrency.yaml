@@ -1,0 +1,28 @@
+name: multiple-sleep-calls
+
+on:
+  workflow_dispatch:
+    inputs:
+      DEPLOYMENT_TIME:
+        type: string
+        required: true
+        default: 60
+
+jobs:
+  job0:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
+    environment: dev
+    with:
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+  job1:
+    needs: [ job0 ]
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
+    environment: int
+    with:
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+  job2:
+    needs: [ job1 ]
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
+    environment: prod
+    with:
+      TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
