@@ -1,32 +1,41 @@
-name: multiple-sleep-calls-with-concurrency
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: false
+name: mock-build-and-deploy
 
 on:
   workflow_dispatch:
     inputs:
+      BUILD_TIME:
+        type: string
+        required: true
+        default: 10
       DEPLOYMENT_TIME:
         type: string
         required: true
-        default: 60
+        default: 10
 
 jobs:
-  job0:
+  build-job:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
+    with:
+      TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
+  determine-if-next:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+        echo 'hello!'
+  deploy-dev:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
-  job1:
-    needs: [ job0 ]
+  deploy-int:
+    needs: [ deploy-dev ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
-  job2:
-    needs: [ job1 ]
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-when-unique-concurrency.yaml@main
+  deploy-prod:
+    needs: [ deploy-int ]
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: prod
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
