@@ -6,11 +6,11 @@ on:
       BUILD_TIME:
         type: string
         required: true
-        default: 10
+        default: 5
       DEPLOYMENT_TIME:
         type: string
         required: true
-        default: 10
+        default: 5
 
 jobs:
   build-job:
