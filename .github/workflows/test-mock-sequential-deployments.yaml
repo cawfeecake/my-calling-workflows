@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-        echo 'hello!'
+          echo 'hello!'
   deploy-dev:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
