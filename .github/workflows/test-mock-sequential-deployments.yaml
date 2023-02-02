@@ -24,7 +24,9 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,createdAt,databaseId,displayTitle,event,headBranch,headSha,name,number,startedAt,status,updatedAt,url,workflowDatabaseId,workflowName
+          current_workflow_runs=$(mktemp)
+          gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,createdAt,databaseId,displayTitle,event,headBranch,headSha,name,number,startedAt,status,updatedAt,url,workflowDatabaseId,workflowName > $current_workflow_runs
+          jq . $current_workflow_runs
   deploy-dev:
     needs: [ determine-if-next ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
