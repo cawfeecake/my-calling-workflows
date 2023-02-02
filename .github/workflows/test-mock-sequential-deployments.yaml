@@ -18,11 +18,13 @@ jobs:
     with:
       TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
   determine-if-next:
+    needs: [ build-job ]
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo 'hello!'
   deploy-dev:
+    needs: [ determine-if-next ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: dev
