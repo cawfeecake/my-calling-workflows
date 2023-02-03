@@ -26,7 +26,18 @@ jobs:
         run: |
           current_workflow_runs=$(mktemp)
           gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,createdAt,headBranch,headSha,number,startedAt,status,updatedAt > $current_workflow_runs
+          echo '::group::current workflow runs'
           jq . $current_workflow_runs
+          echo '::endgroup::'
+          run_number=${{ github.run_number }}
+          filtered_runs=$(jq --argjson number "$run_number" 'map(select(.conclusion | . == "") | select(.number != $number))' $current_workflow_runs)
+          echo '::group::filtered workflow runs'
+          jq . <<< $filtered_runs
+          echo '::endgroup::'
+          if [[ $(jq 'length' <<< $filtered_runs) > 0 ]]; then
+            # TODO
+            echo 'THERE ARE MORE PENDING WORKFLOWS THAN JUST ME'
+          fi
   deploy-dev:
     needs: [ determine-if-next ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
