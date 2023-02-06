@@ -4,13 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TIME:
+        description: how long should build be? (in seconds)
         type: string
         required: true
         default: 5
       DEPLOYMENT_TIME:
+        description: how long should deployments take? (in seconds)
         type: string
         required: true
         default: 5
+      FAIL_DEV_DEPLOY:
+        description: whether to fail deployment to `dev`
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-job:
@@ -55,6 +62,7 @@ jobs:
     with:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+      SHOULD_FAIL: ${{ inputs.FAIL_DEV_DEPLOY }}
   deploy-int:
     needs: [ deploy-dev ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
