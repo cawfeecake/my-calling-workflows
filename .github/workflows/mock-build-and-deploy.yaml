@@ -51,7 +51,7 @@ jobs:
               # <debug>
               # TODO
             else
-              echo '::warning::unable to find the previous run (#$previous_run_number) in most recent 20 workflow runs'
+              echo "::warning::unable to find the previous run (#$previous_run_number) in most recent 20 workflow runs"
             fi
           else
             echo '::info::this is the first run of the workflow; proceeding...'
