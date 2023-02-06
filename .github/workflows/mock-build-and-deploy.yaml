@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TIME:
-        description: how long should build be? (in seconds)
+        description: build length (in seconds)
         type: string
         required: true
         default: 5
       DEPLOYMENT_TIME:
-        description: how long should deployments take? (in seconds)
+        description: deployment lengths (in seconds)
         type: string
         required: true
         default: 5
       FAIL_DEV_DEPLOY:
-        description: whether to fail deployment to `dev`
+        description: fail deployment to `dev`?
         type: boolean
         required: false
         default: false
