@@ -39,10 +39,10 @@ jobs:
             gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,createdAt,headBranch,headSha,number,startedAt,status,updatedAt > $twenty_most_recent_runs
             # <debug>
             echo '::group::20 most recent workflow runs'
-            jq . $current_workflow_runs
+            jq . $twenty_most_recent_runs
             echo '::endgroup::'
             # </debug>
-            previous_run=$(jq --argjson prev "$previous_run_number" 'map(select(.number == $prev))' $current_workflow_runs)
+            previous_run=$(jq --argjson prev "$previous_run_number" 'map(select(.number == $prev))' $twenty_most_recent_runs)
             if [[ $(jq 'length' <<< $previous_run) > 0 ]]; then
               # <debug>
               echo '::group::previous workflow run'
