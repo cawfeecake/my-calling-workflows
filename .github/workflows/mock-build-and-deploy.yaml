@@ -43,82 +43,82 @@ jobs:
     steps:
       - run: |
           echo 'Hello world!'
-  determine-if-next:
-    needs: [ build-job ]
-    runs-on: ubuntu-latest
-    steps:
-      - env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          previous_run_number=$((${{ github.run_number }} - 1))
-          if [[ $previous_run_number > 0 ]]; then
-            # question: is this the best way to get information on the n - 1 workflow?
-            twenty_most_recent_runs=$(mktemp)
-            # note: default for --limit in following command is 20
-            gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,databaseId,number,status > $twenty_most_recent_runs
-            # <debug>
-            echo '::group::20 most recent workflow runs'
-            jq . $twenty_most_recent_runs
-            echo '::endgroup::'
-            # </debug>
-            previous_run_array=$(jq --argjson prev "$previous_run_number" 'map(select(.number == $prev))' $twenty_most_recent_runs)
-            if [[ $(jq 'length' <<< $previous_run_array) > 0 ]]; then
-              previous_run=$(jq 'first' <<< $previous_run_array)
-              # <debug>
-              echo '::group::previous workflow run'
-              jq . <<< $previous_run
-              echo '::endgroup::'
-              # <debug>
-              while : ; do
-                run_conclusion=$(jq --raw-output '.conclusion' <<< $previous_run)
-                if [[ $run_conclusion == '' ]]; then
-                wait_for_status_array=$('pending', 'waiting',
-                else
-                  break
-                fi
-               # all possible workflow "status" values:
-               #
-               # only when concluded:
-               # - completed
-               # - cancelled
-               # - failure 
-               # - neutral
-               # - skipped
-               # - stale (?)
-               # - success
-               # - timed_out (?)
-               #
-               # only when has not concluded:
-               # - in_progress (happens when a workflow job (steps, too?) is executing)
-               # - queued (happens when workflow (steps, too?) has been notified to start, but has not yet started
-               # - waiting (happens when waiting for protected environment requirements to be satisfied)
-               # - pending (happens when waiting for concurrency group key)
-               #
-               # (?) unknown:
-               # - action_required, only when concluded? does this happen when a job or step cannot call reusable workflow or action?
-               # - requested, only when has not concluded? cron related? (similar case to "queued" status?)
-               #
-
-
-                run_status=$(jq --raw-output '.status' <<< $previous_run)
-                if [[ $run_status == 'pending' ]]; then
-                  _TIMEOUT_SECONDS_BETWEEN_CHECKS=5
-                  while : ; do
-                    sleep $_TIMEOUT_SECONDS_BETWEEN_CHECKS
-
-                    echo 
-                    break
-                  done
-                else
-                  echo "::info::status of previous run (#$previous_run_number) is: \"$run_status\""
-                fi
-              fi
-            else
-              echo "::warning::unable to find the previous run (#$previous_run_number) in most recent 20 workflow runs"
-            fi
-          else
-            echo '::info::this is the first run of the workflow; proceeding...'
-          fi
+#  determine-if-next:
+#    needs: [ build-job ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - env:
+#          GITHUB_TOKEN: ${{ github.token }}
+#        run: |
+#          previous_run_number=$((${{ github.run_number }} - 1))
+#          if [[ $previous_run_number > 0 ]]; then
+#            # question: is this the best way to get information on the n - 1 workflow?
+#            twenty_most_recent_runs=$(mktemp)
+#            # note: default for --limit in following command is 20
+#            gh run list -R ${{ github.repository }} -w ${{ github.workflow }} --json conclusion,databaseId,number,status > $twenty_most_recent_runs
+#            # <debug>
+#            echo '::group::20 most recent workflow runs'
+#            jq . $twenty_most_recent_runs
+#            echo '::endgroup::'
+#            # </debug>
+#            previous_run_array=$(jq --argjson prev "$previous_run_number" 'map(select(.number == $prev))' $twenty_most_recent_runs)
+#            if [[ $(jq 'length' <<< $previous_run_array) > 0 ]]; then
+#              previous_run=$(jq 'first' <<< $previous_run_array)
+#              # <debug>
+#              echo '::group::previous workflow run'
+#              jq . <<< $previous_run
+#              echo '::endgroup::'
+#              # <debug>
+#              while : ; do
+#                run_conclusion=$(jq --raw-output '.conclusion' <<< $previous_run)
+#                if [[ $run_conclusion == '' ]]; then
+#                wait_for_status_array=$('pending', 'waiting',
+#                else
+#                  break
+#                fi
+#               # all possible workflow "status" values:
+#               #
+#               # only when concluded:
+#               # - completed
+#               # - cancelled
+#               # - failure 
+#               # - neutral
+#               # - skipped
+#               # - stale (?)
+#               # - success
+#               # - timed_out (?)
+#               #
+#               # only when has not concluded:
+#               # - in_progress (happens when a workflow job (steps, too?) is executing)
+#               # - queued (happens when workflow (steps, too?) has been notified to start, but has not yet started
+#               # - waiting (happens when waiting for protected environment requirements to be satisfied)
+#               # - pending (happens when waiting for concurrency group key)
+#               #
+#               # (?) unknown:
+#               # - action_required, only when concluded? does this happen when a job or step cannot call reusable workflow or action?
+#               # - requested, only when has not concluded? cron related? (similar case to "queued" status?)
+#               #
+#
+#
+#                run_status=$(jq --raw-output '.status' <<< $previous_run)
+#                if [[ $run_status == 'pending' ]]; then
+#                  _TIMEOUT_SECONDS_BETWEEN_CHECKS=5
+#                  while : ; do
+#                    sleep $_TIMEOUT_SECONDS_BETWEEN_CHECKS
+#
+#                    echo 
+#                    break
+#                  done
+#                else
+#                  echo "::info::status of previous run (#$previous_run_number) is: \"$run_status\""
+#                fi
+#              fi
+#            else
+#              echo "::warning::unable to find the previous run (#$previous_run_number) in most recent 20 workflow runs"
+#            fi
+#          else
+#            echo '::info::this is the first run of the workflow; proceeding...'
+#          fi
   deploy-dev:
     needs: [ follows ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
