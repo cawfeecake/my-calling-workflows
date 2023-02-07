@@ -7,12 +7,12 @@ on:
         description: build length (in seconds)
         type: string
         required: true
-        default: 5
+        default: 1
       DEPLOYMENT_TIME:
         description: deployment lengths (in seconds)
         type: string
         required: true
-        default: 5
+        default: 1
       FAIL_DEV_DEPLOY:
         description: fail deployment to `dev`?
         type: boolean
