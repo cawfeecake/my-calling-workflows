@@ -25,7 +25,7 @@ jobs:
     with:
       TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
       #_JOB_NAME_TO_QUEUE_FOR: deploy-dev
-  queue_if_needed:
+  queue-if-needed:
     needs: [ build-job ]
     if: needs.build-job.outputs.should_queue == 'true'
     runs-on: ubuntu-latest
@@ -33,16 +33,16 @@ jobs:
       - run: |
           echo 'Hello world!'
   follows:
-    needs: [ build-job, queue_if_needed ]
+    needs: [ build-job, queue-if-needed ]
     if: |
-      always() &&
-      ! cancelled() &&
+      always() && ! cancelled() &&
       (needs.build-job.result == 'success' || needs.build-job.result == 'skipped') &&
-      (needs.queue_if_needed.result == 'success' || needs.queue_if_needed.result == 'skipped')
+      (needs.queue-if-needed.result == 'success' || needs.queue-if-needed.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo 'Hello world!'
+          echo 'needs.build-job.result : ${{ needs.build-job.result }}'
+          echo 'needs.queue-if-needed.result : ${{ needs.queue-if-needed.result }}'
 #  determine-if-next:
 #    needs: [ build-job ]
 #    runs-on: ubuntu-latest
