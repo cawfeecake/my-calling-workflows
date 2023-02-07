@@ -35,8 +35,8 @@ jobs:
   follows:
     needs: [ build-job, queue-if-needed ]
     if: |
-      (failure() || success()) && ! cancelled() &&
-      (needs.build-job.result == 'success' || needs.build-job.result == 'skipped') &&
+      (always() && ! cancelled()) &&
+      needs.build-job.result == 'success' &&
       (needs.queue-if-needed.result == 'success' || needs.queue-if-needed.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
@@ -121,6 +121,9 @@ jobs:
 #          fi
   deploy-dev:
     needs: [ follows ]
+    if: |
+      (always() && ! cancelled()) &&
+      needs.follows.result == 'success'
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: dev
@@ -128,12 +131,18 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEV_DEPLOY }}
   deploy-int:
     needs: [ deploy-dev ]
+    if: |
+      (always() && ! cancelled()) &&
+      needs..deploy-devresult == 'success'
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
   deploy-prod:
     needs: [ deploy-int ]
+    if: |
+      (always() && ! cancelled()) &&
+      needs.deploy-int.result == 'success'
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: prod
