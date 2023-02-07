@@ -35,7 +35,7 @@ jobs:
   follows:
     needs: [ build-job, queue-if-needed ]
     if: |
-      always() && ! cancelled() &&
+      (failure() || success()) && ! cancelled() &&
       (needs.build-job.result == 'success' || needs.build-job.result == 'skipped') &&
       (needs.queue-if-needed.result == 'success' || needs.queue-if-needed.result == 'skipped')
     runs-on: ubuntu-latest
