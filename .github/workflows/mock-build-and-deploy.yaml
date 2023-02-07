@@ -13,11 +13,16 @@ on:
         type: string
         required: true
         default: 1
-      FAIL_DEV_DEPLOY:
-        description: fail deployment to `dev`?
-        type: boolean
-        required: false
-        default: false
+      FAIL_DEPLOYMENT_TO:
+        description: if not "none", will have job that deploys to given environment fail
+        type: choice
+        options:
+          - none
+          - dev
+          - int
+          - prod
+        required: true
+        default: none
 
 jobs:
   build-job:
@@ -128,7 +133,7 @@ jobs:
     with:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
-      SHOULD_FAIL: ${{ inputs.FAIL_DEV_DEPLOY }}
+      SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   deploy-int:
     needs: [ deploy-dev ]
     if: |
@@ -138,6 +143,7 @@ jobs:
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+      SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   deploy-prod:
     needs: [ deploy-int ]
     if: |
@@ -147,3 +153,4 @@ jobs:
     with:
       CONCURRENCY_KEY: prod
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
+      SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'prod' }}
