@@ -140,6 +140,7 @@ jobs:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: dev
+      ENVIRONMENT: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
@@ -160,6 +161,7 @@ jobs:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: int
+      ENVIRONMENT: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
@@ -180,5 +182,6 @@ jobs:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: prod
+      ENVIRONMENT: prod
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'prod' }}
