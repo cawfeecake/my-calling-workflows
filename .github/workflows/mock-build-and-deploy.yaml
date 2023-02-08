@@ -134,7 +134,7 @@ jobs:
   deploy-dev:
     needs: [ build-job, queue-before-deploy-dev-if-needed ]
     if: |
-      (always() && ! cancelled()) &&
+      (always() && ! cancelled() && ! failure()) &&
       needs.build-job.result == 'success' &&
       (needs.queue-before-deploy-dev-if-needed.result == 'success' || needs.queue-before-deploy-dev-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
@@ -154,7 +154,7 @@ jobs:
   deploy-int:
     needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
     if: |
-      (always() && ! cancelled()) &&
+      (always() && ! cancelled() && ! failure()) &&
       needs.deploy-dev.result == 'success' &&
       (needs.queue-before-deploy-int-if-needed.result == 'success' || needs.queue-before-deploy-int-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
@@ -174,7 +174,7 @@ jobs:
   deploy-prod:
     needs: [ deploy-int, queue-before-deploy-prod-if-needed ]
     if: |
-      (always() && ! cancelled()) &&
+      (always() && ! cancelled() && ! failure()) &&
       needs.deploy-int.result == 'success' &&
       (needs.queue-before-deploy-prod-if-needed.result == 'success' || needs.queue-before-deploy-prod-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
