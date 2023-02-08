@@ -45,7 +45,7 @@ jobs:
             deploy-prod
   queue-before-deploy-dev-if-needed:
     needs: [ build-job, determine-if-should-queue ]
-    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'])
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
@@ -66,7 +66,7 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
     needs: [ deploy-dev, determine-if-should-queue ]
-    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'])
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
@@ -87,7 +87,7 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
     needs: [ deploy-int, determine-if-should-queue ]
-    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'])
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
