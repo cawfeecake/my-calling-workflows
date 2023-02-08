@@ -64,7 +64,7 @@ jobs:
           STEP_JSON: ${{ toJson(needs.determine-if-should-queue) }}
           STEP_OUTPUTS: ${{ toJson(needs.determine-if-should-queue.outputs) }}
           COND_ARG: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev }}
-          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev == 'true' }}
+          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev }}
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
@@ -103,7 +103,7 @@ jobs:
           STEP_JSON: ${{ toJson(needs.determine-if-should-queue) }}
           STEP_OUTPUTS: ${{ toJson(needs.determine-if-should-queue.outputs) }}
           COND_ARG: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int }}
-          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int == 'true' }}
+          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int }}
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
