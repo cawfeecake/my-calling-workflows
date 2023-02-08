@@ -126,7 +126,7 @@ jobs:
       (always() && ! cancelled()) &&
       needs.build-job.result == 'success' &&
       (needs.queue-before-deploy-dev-if-needed.result == 'success' || needs.queue-before-deploy-dev-if-needed.result == 'skipped')
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
@@ -144,7 +144,7 @@ jobs:
       (always() && ! cancelled()) &&
       needs.deploy-dev.result == 'success' &&
       (needs.queue-before-deploy-int-if-needed.result == 'success' || needs.queue-before-deploy-int-if-needed.result == 'skipped')
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
@@ -162,7 +162,7 @@ jobs:
       (always() && ! cancelled()) &&
       needs.deploy-int.result == 'success' &&
       (needs.queue-before-deploy-prod-if-needed.result == 'success' || needs.queue-before-deploy-prod-if-needed.result == 'skipped')
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       CONCURRENCY_KEY: prod
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
