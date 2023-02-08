@@ -56,9 +56,15 @@ jobs:
           echo "$STEP_JSON"
           echo 'step outputs JSON...'
           echo "$STEP_OUTPUTS"
+          echo 'COND_ARG...'
+          echo "$COND_ARG"
+          echo '$COND...'
+          echo "$COND"
         env:
           STEP_JSON: ${{ toJson(needs.determine-if-should-queue) }}
           STEP_OUTPUTS: ${{ toJson(needs.determine-if-should-queue.outputs) }}
+          COND_ARG: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev }}
+          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev == 'true' }}
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
@@ -80,13 +86,24 @@ jobs:
     needs: [ deploy-dev, determine-if-should-queue ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.deploy-dev.result == 'success' &&
-      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int == 'true'
+      needs.deploy-dev.result == 'success'
     runs-on: ubuntu-latest
     steps:
       # <debug>
       - run: |
-          echo "${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] }}"
+          echo 'step JSON...'
+          echo "$STEP_JSON"
+          echo 'step outputs JSON...'
+          echo "$STEP_OUTPUTS"
+          echo 'COND_ARG...'
+          echo "$COND_ARG"
+          echo '$COND...'
+          echo "$COND"
+        env:
+          STEP_JSON: ${{ toJson(needs.determine-if-should-queue) }}
+          STEP_OUTPUTS: ${{ toJson(needs.determine-if-should-queue.outputs) }}
+          COND_ARG: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int }}
+          COND: ${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int == 'true' }}
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
