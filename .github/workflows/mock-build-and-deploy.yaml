@@ -45,12 +45,13 @@ jobs:
             deploy-prod
   queue-before-deploy-dev-if-needed:
     needs: [ build-job, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev']
+    if: always()
     runs-on: ubuntu-latest
     steps:
       # <debug>
       - run: |
-          echo "${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] }}"
+          echo "${{ fromJson(needs.determine-if-should-queue) }}"
+          echo "${{ fromJson(needs.determine-if-should-queue.outputs) }}"
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
