@@ -132,7 +132,7 @@ jobs:
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
-    needs: [ deploy-dev ]
+    needs: [ deploy-dev, determine-if-should-queue ]
     if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-int'] == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -150,7 +150,7 @@ jobs:
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
-    needs: [ build-job ]
+    needs: [ deploy-int, determine-if-should-queue ]
     if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-prod'] == 'true'
     runs-on: ubuntu-latest
     steps:
