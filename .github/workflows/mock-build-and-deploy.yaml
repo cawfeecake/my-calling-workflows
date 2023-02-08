@@ -30,20 +30,35 @@ jobs:
     with:
       TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
   determine-if-should-queue:
-    uses: cawfeecake/my-reusable-workflows/.github/workflows/determine-to-queue.yaml@main
-    with:
+    runs-on: ubuntu-latest
+    outputs:
+      should-queue-map:
+        description: JSON mapping of job names as keys to booleans representing whether that job is currently executing
+        value: ${{ steps.action.outputs.should-queue-map }}
+      previous-run:
+        description: if there is queueing to do at any stage, this will be the id of the run to watch
+        value: ${{ steps.action.outputs.previous-run }}
+    env:
       RUN_TO_QUEUE: ${{ github.run_number }}
       JOB_NAMES: |
         deploy-dev
         deploy-int
         deploy-prod
+    steps:
+      - id: action
+        uses: cawfeecake/actions-determine-to-queue@main
+        with:
+          RUN_TO_QUEUE: ${{ env.RUN_TO_QUEUE }}
+          JOB_NAMES: ${{ env.JOB_NAMES }}
   queue-before-deploy-dev-if-needed:
     needs: [ build-job, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-dev'] == 'true'
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
     steps:
       - run: |
-          echo 'Hello world!'
+          echo "Hello world: $PROCEEDING_RUN"
 #  determine-if-next:
 #    needs: [ build-job ]
 #    runs-on: ubuntu-latest
@@ -133,11 +148,13 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
     needs: [ deploy-dev, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-int'] == 'true'
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
     steps:
       - run: |
-          echo 'Hello world!'
+          echo "Hello world: $PROCEEDING_RUN"
   deploy-int:
     needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
     if: |
@@ -151,11 +168,13 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
     needs: [ deploy-int, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-prod'] == 'true'
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
     steps:
       - run: |
-          echo 'Hello world!'
+          echo "Hello world: $PROCEEDING_RUN"
   deploy-prod:
     needs: [ deploy-int, queue-before-deploy-prod-if-needed ]
     if: |
