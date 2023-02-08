@@ -45,7 +45,7 @@ jobs:
             deploy-prod
   queue-before-deploy-dev-if-needed:
     needs: [ build-job, determine-if-should-queue ]
-    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'])
+    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev']
     runs-on: ubuntu-latest
     steps:
       # <debug>
