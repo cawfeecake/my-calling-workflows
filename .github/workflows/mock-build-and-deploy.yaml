@@ -47,7 +47,8 @@ jobs:
     needs: [ build-job, determine-if-should-queue ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.build-job.result == 'success'
+      needs.build-job.result == 'success' &&
+      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev
     runs-on: ubuntu-latest
     steps:
       # <debug>
@@ -86,7 +87,8 @@ jobs:
     needs: [ deploy-dev, determine-if-should-queue ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.deploy-dev.result == 'success'
+      needs.deploy-dev.result == 'success' &&
+      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int
     runs-on: ubuntu-latest
     steps:
       # <debug>
@@ -126,7 +128,7 @@ jobs:
     if: |
       (always() && ! cancelled() && ! failure()) &&
       needs.deploy-int.result == 'success' &&
-      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-prod == 'true'
+      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-prod
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
