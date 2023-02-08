@@ -48,7 +48,7 @@ jobs:
           JOB_NAMES: ${{ env.JOB_NAMES }}
   queue-before-deploy-dev-if-needed:
     needs: [ build-job, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] == 'true'
+    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'])
     runs-on: ubuntu-latest
     env:
       PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
@@ -145,7 +145,7 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
     needs: [ deploy-dev, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] == 'true'
+    if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'])
     runs-on: ubuntu-latest
     env:
       PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
@@ -166,7 +166,7 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
     needs: [ deploy-int, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'] == 'true'
+    if: to(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'])
     runs-on: ubuntu-latest
     env:
       PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
