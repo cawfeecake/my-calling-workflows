@@ -50,8 +50,13 @@ jobs:
     steps:
       # <debug>
       - run: |
-          echo "${{ fromJson(needs.determine-if-should-queue) }}"
-          echo "${{ fromJson(needs.determine-if-should-queue.outputs) }}"
+          echo 'step JSON...'
+          echo "$STEP_JSON"
+          echo 'step outputs JSON...'
+          echo "$STEP_OUTPUTS"
+        env:
+          STEP_JSON: ${{ toJson(needs.determine-if-should-queue) }}
+          STEP_OUTPUTS: ${{ toJson(needs.determine-if-should-queue.outputs) }}
       # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
