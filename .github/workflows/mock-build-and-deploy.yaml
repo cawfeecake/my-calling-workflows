@@ -73,11 +73,6 @@ jobs:
         with:
           RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
           JOB_NAME: deploy-int
-    env:
-      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run }}
-    steps:
-      - run: |
-          echo "Hello world: $PROCEEDING_RUN"
   deploy-int:
     needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
     if: |
