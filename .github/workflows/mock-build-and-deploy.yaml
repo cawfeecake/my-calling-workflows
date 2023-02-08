@@ -48,6 +48,10 @@ jobs:
     if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] == 'true'
     runs-on: ubuntu-latest
     steps:
+      # <debug>
+      - run: |
+          echo "${{ fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'] }}"
+      # </debug>
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
           RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
