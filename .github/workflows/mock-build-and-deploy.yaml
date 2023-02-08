@@ -70,7 +70,9 @@ jobs:
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
     needs: [ deploy-dev, determine-if-should-queue ]
-    if: fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] == 'true'
+    if: |
+      (always() && ! cancelled() && ! failure()) &&
+      fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'] == 'true'
     runs-on: ubuntu-latest
     steps:
       # <debug>
