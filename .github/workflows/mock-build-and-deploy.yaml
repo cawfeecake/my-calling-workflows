@@ -29,25 +29,21 @@ jobs:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
-      #_JOB_NAME_TO_QUEUE_FOR: deploy-dev
-  queue-if-needed:
-    needs: [ build-job ]
-    if: needs.build-job.outputs.should_queue == 'true'
+  determine-if-should-queue:
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/determine-to-queue.yaml@main
+    with:
+      RUN_BEFORE: ${{ github.run_number - 1 }}
+      JOB_NAMES: |
+        deploy-dev
+        deploy-int
+        deploy-prod
+  queue-before-deploy-dev-if-needed:
+    needs: [ build-job, determine-if-should-queue ]
+    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-dev'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo 'Hello world!'
-  follows:
-    needs: [ build-job, queue-if-needed ]
-    if: |
-      (always() && ! cancelled()) &&
-      needs.build-job.result == 'success' &&
-      (needs.queue-if-needed.result == 'success' || needs.queue-if-needed.result == 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo 'needs.build-job.result : ${{ needs.build-job.result }}'
-          echo 'needs.queue-if-needed.result : ${{ needs.queue-if-needed.result }}'
 #  determine-if-next:
 #    needs: [ build-job ]
 #    runs-on: ubuntu-latest
@@ -125,30 +121,47 @@ jobs:
 #            echo '::info::this is the first run of the workflow; proceeding...'
 #          fi
   deploy-dev:
-    needs: [ follows ]
+    needs: [ build-job, queue-before-deploy-dev-if-needed ]
     if: |
       (always() && ! cancelled()) &&
-      needs.follows.result == 'success'
+      needs.build-job.result == 'success' &&
+      (needs.queue-before-deploy-dev-if-needed.result == 'success' || needs.queue-before-deploy-dev-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: dev
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
-  deploy-int:
+  queue-before-deploy-int-if-needed:
     needs: [ deploy-dev ]
+    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-int'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'Hello world!'
+  deploy-int:
+    needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
     if: |
       (always() && ! cancelled()) &&
-      needs.deploy-dev.result == 'success'
+      needs.deploy-dev.result == 'success' &&
+      (needs.queue-before-deploy-int-if-needed.result == 'success' || needs.queue-before-deploy-int-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: int
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
+  queue-before-deploy-prod-if-needed:
+    needs: [ build-job ]
+    if: fromJson(needs.determine-if-should-queue.outputs.should_queue_map)['deploy-prod'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'Hello world!'
   deploy-prod:
-    needs: [ deploy-int ]
+    needs: [ deploy-int, queue-before-deploy-prod-if-needed ]
     if: |
       (always() && ! cancelled()) &&
-      needs.deploy-int.result == 'success'
+      needs.deploy-int.result == 'success' &&
+      (needs.queue-before-deploy-prod-if-needed.result == 'success' || needs.queue-before-deploy-prod-if-needed.result == 'skipped')
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep-with-concurrency-key.yaml@main
     with:
       CONCURRENCY_KEY: prod
