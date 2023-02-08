@@ -51,7 +51,7 @@ jobs:
     if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-dev'])
     runs-on: ubuntu-latest
     env:
-      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run }}
     steps:
       - run: |
           echo "Hello world: $PROCEEDING_RUN"
@@ -148,7 +148,7 @@ jobs:
     if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-int'])
     runs-on: ubuntu-latest
     env:
-      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run }}
     steps:
       - run: |
           echo "Hello world: $PROCEEDING_RUN"
@@ -169,7 +169,7 @@ jobs:
     if: toJson(fromJson(needs.determine-if-should-queue.outputs.should-queue-map)['deploy-prod'])
     runs-on: ubuntu-latest
     env:
-      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run-id }}
+      PROCEEDING_RUN: ${{ needs.determine-if-should-queue.outputs.previous-run }}
     steps:
       - run: |
           echo "Hello world: $PROCEEDING_RUN"
