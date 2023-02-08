@@ -32,7 +32,7 @@ jobs:
   determine-if-should-queue:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/determine-to-queue.yaml@main
     with:
-      RUN_BEFORE: ${{ github.run_number - 1 }}
+      RUN_TO_QUEUE: ${{ github.run_number }}
       JOB_NAMES: |
         deploy-dev
         deploy-int
