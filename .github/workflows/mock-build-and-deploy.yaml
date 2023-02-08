@@ -32,12 +32,8 @@ jobs:
   determine-if-should-queue:
     runs-on: ubuntu-latest
     outputs:
-      should-queue-map:
-        description: JSON mapping of job names as keys to booleans representing whether that job is currently executing
-        value: ${{ steps.action.outputs.should-queue-map }}
-      previous-run:
-        description: if there is queueing to do at any stage, this will be the id of the run to watch
-        value: ${{ steps.action.outputs.previous-run }}
+      should-queue-map: ${{ steps.action.outputs.should-queue-map }}
+      previous-run: ${{ steps.action.outputs.previous-run }}
     env:
       RUN_TO_QUEUE: ${{ github.run_number }}
       JOB_NAMES: |
