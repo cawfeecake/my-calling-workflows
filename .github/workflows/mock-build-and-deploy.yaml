@@ -24,6 +24,9 @@ on:
         required: true
         default: none
 
+permissions:
+  actions: write
+
 jobs:
   build-job:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
@@ -32,10 +35,10 @@ jobs:
   determine-if-should-queue:
     runs-on: ubuntu-latest
     outputs:
-      should-queue-map: ${{ steps.action-call.outputs.should-queue-map }}
-      previous-run: ${{ steps.action-call.outputs.previous-run }}
+      should-queue-map: ${{ steps.action.outputs.should-queue-map }}
+      previous-run: ${{ steps.action.outputs.previous-run }}
     steps:
-      - id: action-call
+      - id: action
         uses: cawfeecake/actions-determine-to-queue@main
         with:
           RUN_TO_QUEUE: ${{ github.run_number }}
