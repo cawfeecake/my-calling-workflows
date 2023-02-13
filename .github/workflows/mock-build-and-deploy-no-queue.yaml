@@ -1,4 +1,4 @@
-name: mock-build-and-deploy
+name: mock-build-and-deploy-no-queue
 
 on:
   workflow_dispatch:
