@@ -32,32 +32,37 @@ jobs:
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
       TIME_TO_SLEEP: ${{ inputs.BUILD_TIME }}
-  determine-if-should-queue:
-    runs-on: ubuntu-latest
-    outputs:
-      should-queue-map: ${{ steps.action.outputs.should-queue-map }}
-      previous-run: ${{ steps.action.outputs.previous-run }}
-    steps:
-      - id: action
-        uses: cawfeecake/actions-determine-to-queue@main
-        with:
-          RUN_TO_QUEUE: ${{ github.run_number }}
-          JOB_NAMES: >-
-            deploy-dev
-            deploy-int
-            deploy-prod
   queue-before-deploy-dev-if-needed:
-    needs: [ build-job, determine-if-should-queue ]
+    needs: [ build-job ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.build-job.result == 'success' &&
-      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev
+      needs.build-job.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
-          RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
           JOB_NAME: deploy-dev
+#  queue-before-deploy-dev-if-needed:
+#    needs: [ build-job, determine-if-should-queue ]
+#    if: |
+#      (always() && ! cancelled() && ! failure()) &&
+#      needs.build-job.result == 'success' &&
+#      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-dev
+##   outputs:
+##     <output-name-job-level>: ${{ steps.<step-id>.outputs.<output-name-step-level> }}
+##   # outputs defined in the reusable workflow; ref'd by needs.<job-name>.outputs.<output-name-job-level>
+##   # outside the workflow just like w/ steps
+##   # where <job-name> is the same between workflow/job, and step-id is generated and independent of anything outside
+##   runs-on: ubuntu-latest
+#    uses: cawfeecake/my-reusable-workflows/.github/workflows/determine-to-queue.yaml@main
+##   steps:
+##     - uses: cawfeecake/actions-concurrency-queue@main
+##       with:
+##         RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
+##         JOB_NAME: deploy-dev
+#    with:
+#      RUN_ID: ...
+#      JOB_NAME: ...
   deploy-dev:
     needs: [ build-job, queue-before-deploy-dev-if-needed ]
     if: |
@@ -71,16 +76,14 @@ jobs:
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'dev' }}
   queue-before-deploy-int-if-needed:
-    needs: [ deploy-dev, determine-if-should-queue ]
+    needs: [ deploy-dev ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.deploy-dev.result == 'success' &&
-      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-int
+      needs.deploy-dev.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
-          RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
           JOB_NAME: deploy-int
   deploy-int:
     needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
@@ -95,16 +98,14 @@ jobs:
       TIME_TO_SLEEP: ${{ inputs.DEPLOYMENT_TIME }}
       SHOULD_FAIL: ${{ inputs.FAIL_DEPLOYMENT_TO == 'int' }}
   queue-before-deploy-prod-if-needed:
-    needs: [ deploy-int, determine-if-should-queue ]
+    needs: [ deploy-int ]
     if: |
       (always() && ! cancelled() && ! failure()) &&
-      needs.deploy-int.result == 'success' &&
-      fromJson(needs.determine-if-should-queue.outputs.should-queue-map).deploy-prod
+      needs.deploy-int.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         with:
-          RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
           JOB_NAME: deploy-prod
   deploy-prod:
     needs: [ deploy-int, queue-before-deploy-prod-if-needed ]
