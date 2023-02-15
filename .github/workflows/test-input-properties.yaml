@@ -1,0 +1,41 @@
+name: test-input-properties
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-test-with-all-input-filled:
+    if: always()
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/many-inputs.yaml@main
+    with:
+      REQUIRED: filled
+      NOT_REQUIRED: filled
+      REQUIRED_TRUE_WITH_DEFAULT: filled
+      REQUIRED_FALSE_WITH_DEFAULT: filled
+  call-test-with-all-input-blank:
+    if: always()
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/many-inputs.yaml@main
+    with:
+      REQUIRED: ''
+      NOT_REQUIRED: ''
+      REQUIRED_TRUE_WITH_DEFAULT: ''
+      REQUIRED_FALSE_WITH_DEFAULT: ''
+  call-test-with-all-input-empty:
+    if: always()
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/many-inputs.yaml@main
+    with:
+      REQUIRED:
+      NOT_REQUIRED:
+      REQUIRED_TRUE_WITH_DEFAULT:
+      REQUIRED_FALSE_WITH_DEFAULT:
+  call-test-with-not-required-gone:
+    if: always()
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/many-inputs.yaml@main
+    with:
+      REQUIRED: filled
+      REQUIRED_TRUE_WITH_DEFAULT: filled
+  call-test-with-not-required-gone-and-with-default-gone:
+    if: always()
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/many-inputs.yaml@main
+    with:
+      REQUIRED: filled
