@@ -1,0 +1,40 @@
+name: test-workflow-dispatch-inputs-properties
+
+on:
+  workflow_dispatch:
+    inputs:
+      REQUIRED:
+        description: a required string with no default
+        type: string
+        required: true
+      NOT_REQUIRED:
+        description: a string that's not required without a default
+        type: string
+        required: false
+      REQUIRED_TRUE_WITH_DEFAULT:
+        description: this input is required, and has a default string value
+        type: string
+        required: true
+        default: 'require true w/ default'
+      REQUIRED_FALSE_WITH_DEFAULT:
+        description: this input is not required, but has a default string value
+        type: string
+        required: false
+        default: 'require false w/ default'
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      REQUIRED: ${{ inputs.REQUIRED }}
+      NOT_REQUIRED: ${{ inputs.NOT_REQUIRED }}
+      REQUIRED_TRUE_WITH_DEFAULT: ${{ inputs.REQUIRED_TRUE_WITH_DEFAULT }}
+      REQUIRED_FALSE_WITH_DEFAULT: ${{ inputs.REQUIRED_FALSE_WITH_DEFAULT }}
+    steps:
+      - run: |
+          echo "::info::REQUIRED = \"$REQUIRED\""
+          echo "::info::is REQUIRED equal to the empty string?... \"${{ env.REQUIRED == '' }}\""
+          echo "::info::REQUIRED is cosidered... \"${{ (env.REQUIRED && true) || false }}\""
+          echo "::info::NOT_REQUIRED= \"$NOT_REQUIRED\""
+          echo "::info::REQUIRED_TRUE_WITH_DEFAULT = \"$REQUIRED_TRUE_WITH_DEFAULT\""
+          echo "::info::REQUIRED_FALSE_WITH_DEFAULT = \"$REQUIRED_FALSE_WITH_DEFAULT\""

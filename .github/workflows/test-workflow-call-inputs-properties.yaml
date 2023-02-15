@@ -1,4 +1,4 @@
-name: test-input-properties
+name: test-workflow-call-inputs-properties
 
 on:
   workflow_dispatch:
