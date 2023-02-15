@@ -3,6 +3,12 @@ name: test-workflow-dispatch-inputs-properties
 on:
   workflow_dispatch:
     inputs:
+      DESC:
+        description: an additional label to give this test run
+        type: string
+        required: true
+        default: 'test run'
+      # inputs under test...
       REQUIRED:
         description: a required string with no default
         type: string
@@ -26,12 +32,14 @@ jobs:
   report:
     runs-on: ubuntu-latest
     env:
+      DESC: ${{ inputs.DESC }}
       REQUIRED: ${{ inputs.REQUIRED }}
       NOT_REQUIRED: ${{ inputs.NOT_REQUIRED }}
       REQUIRED_TRUE_WITH_DEFAULT: ${{ inputs.REQUIRED_TRUE_WITH_DEFAULT }}
       REQUIRED_FALSE_WITH_DEFAULT: ${{ inputs.REQUIRED_FALSE_WITH_DEFAULT }}
     steps:
       - run: |
+          echo "$DESC"
           echo "::info::REQUIRED = \"$REQUIRED\""
           echo "::info::is REQUIRED equal to the empty string?... \"${{ env.REQUIRED == '' }}\""
           echo "::info::REQUIRED is cosidered... \"${{ (env.REQUIRED && true) || false }}\""
