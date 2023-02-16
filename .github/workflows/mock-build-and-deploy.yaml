@@ -38,8 +38,11 @@ jobs:
 #      (always() && ! cancelled() && ! failure()) &&
 #      needs.build-job.result == 'success'
     runs-on: ubuntu-latest
+    outputs:
+      run-id: ${{ steps.action.outputs.id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
+        id: action
         with:
           WORKFLOW_JOB_NAME: deploy-dev
 #  queue-before-deploy-dev-if-needed:
@@ -78,11 +81,14 @@ jobs:
   queue-before-deploy-int-if-needed:
     needs: [ deploy-dev, queue-before-deploy-dev-if-needed ]
     runs-on: ubuntu-latest
+    outputs:
+      run-id: ${{ steps.action.outputs.id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
+        id: action
         with:
           WORKFLOW_JOB_NAME: deploy-int
-          WORKFLOW_RUN_ID: ${{ needs.queue-before-deploy-dev-if-needed.outputs.id }}
+          WORKFLOW_RUN_ID: ${{ needs.queue-before-deploy-dev-if-needed.outputs.run-id }}
   deploy-int:
     needs: [ deploy-dev, queue-before-deploy-int-if-needed ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
@@ -94,11 +100,14 @@ jobs:
   queue-before-deploy-prod-if-needed:
     needs: [ deploy-int, queue-before-deploy-int-if-needed ]
     runs-on: ubuntu-latest
+    outputs:
+      run-id: ${{ steps.action.outputs.id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
+        id: action
         with:
           WORKFLOW_JOB_NAME: deploy-prod
-          WORKFLOW_RUN_ID: ${{ needs.queue-before-deploy-int-if-needed.outputs.id }}
+          WORKFLOW_RUN_ID: ${{ needs.queue-before-deploy-int-if-needed.outputs.run-id }}
   deploy-prod:
     needs: [ deploy-int, queue-before-deploy-prod-if-needed ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
