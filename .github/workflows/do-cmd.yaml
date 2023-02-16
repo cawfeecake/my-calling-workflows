@@ -37,7 +37,6 @@ jobs:
         if: inputs.do-checkout-before
       - run: make before
         if: inputs.do-make-target-before
-      - run: echo $PATH
       - run: ${{ inputs.cmd }}
   do-help:
     if: inputs.do-help
