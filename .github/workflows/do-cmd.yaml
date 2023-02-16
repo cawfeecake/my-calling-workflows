@@ -40,6 +40,7 @@ jobs:
       - run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew install jo
+          jo hello=world
       - run: ${{ inputs.cmd }}
   do-help:
     if: inputs.do-help
