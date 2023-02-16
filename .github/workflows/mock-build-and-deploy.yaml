@@ -39,7 +39,7 @@ jobs:
 #      needs.build-job.result == 'success'
     runs-on: ubuntu-latest
     outputs:
-      run-id: ${{ steps.action.outputs.id }}
+      run-id: ${{ steps.action.outputs.run-id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         id: action
@@ -82,7 +82,7 @@ jobs:
     needs: [ deploy-dev, queue-before-deploy-dev-if-needed ]
     runs-on: ubuntu-latest
     outputs:
-      run-id: ${{ steps.action.outputs.id }}
+      run-id: ${{ steps.action.outputs.run-id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         id: action
@@ -101,7 +101,7 @@ jobs:
     needs: [ deploy-int, queue-before-deploy-int-if-needed ]
     runs-on: ubuntu-latest
     outputs:
-      run-id: ${{ steps.action.outputs.id }}
+      run-id: ${{ steps.action.outputs.run-id }}
     steps:
       - uses: cawfeecake/actions-concurrency-queue@main
         id: action
