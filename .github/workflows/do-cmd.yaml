@@ -33,10 +33,25 @@ jobs:
     if: '! (inputs.do-help || inputs.do-version)'
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo 'echo $PATH |'
+          echo $PATH
+          echo 'cat $GITHUB_PATH |'
+          cat $GITHUB_PATH
       - uses: actions/checkout@v3
         if: inputs.do-checkout-before
+      - run: |
+          echo 'echo $PATH |'
+          echo $PATH
+          echo 'cat $GITHUB_PATH |'
+          cat $GITHUB_PATH
       - run: make before
         if: inputs.do-make-target-before
+      - run: |
+          echo 'echo $PATH |'
+          echo $PATH
+          echo 'cat $GITHUB_PATH |'
+          cat $GITHUB_PATH
       - run: ${{ inputs.cmd }}
   do-help:
     if: inputs.do-help
