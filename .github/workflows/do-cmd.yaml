@@ -1,0 +1,36 @@
+name: do-cmd
+
+on:
+  workflow_dispatch:
+    inputs:
+      cmd:
+        description: what command to run
+        type: string
+        required: true
+      do-help:
+        description: whether to run the command with --help flag
+        type: boolean
+        required: false
+        default: false
+      do-version:
+        description: whether to run the command with --version flag
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  do-cmd:
+    if: '! (inputs.do-help || inputs.do-version)'
+    runs-on: ubuntu-latest
+    steps:
+      - run: ${{ inputs.cmd }}
+  do-help:
+    if: inputs.do-help
+    runs-on: ubuntu-latest
+    steps:
+      - run: ${{ inputs.cmd }} --help
+  do-version:
+    if: inputs.do-version
+    runs-on: ubuntu-latest
+    steps:
+      - run: ${{ inputs.cmd }} --version
