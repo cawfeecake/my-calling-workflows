@@ -38,13 +38,6 @@ jobs:
       - run: make placeholder
         if: inputs.do-make-target-before
       - run: ${{ inputs.cmd }}
-  do-cmd-with-checkout:
-    if: >
-      '! (inputs.do-help || inputs.do-version)'
-      '&& inputs.'
-    runs-on: ubuntu-latest
-    steps:
-      - run: ${{ inputs.cmd }}
   do-help:
     if: inputs.do-help
     runs-on: ubuntu-latest
