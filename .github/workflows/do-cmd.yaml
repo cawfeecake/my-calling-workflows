@@ -37,13 +37,6 @@ jobs:
         if: inputs.do-checkout-before
       - run: make before
         if: inputs.do-make-target-before
-      - run: |
-          echo "path==$PATH"
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install jo
-          jo hello=world
-          echo "pathAFTER==$PATH"
-          echo "PATH=$PATH" >> $GITHUB_ENV
       - run: ${{ inputs.cmd }}
   do-help:
     if: inputs.do-help
