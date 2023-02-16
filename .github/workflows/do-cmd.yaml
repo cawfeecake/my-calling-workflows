@@ -7,6 +7,16 @@ on:
         description: what command to run
         type: string
         required: true
+      do-checkout-before:
+        description: whether to do a checkout of this repo before running command
+        type: boolean
+        required: false
+        default: true
+      do-make-target-before:
+        description: whether to run the "before" make target before running command
+        type: boolean
+        required: false
+        default: true
       do-help:
         description: whether to run the command with --help flag
         type: boolean
@@ -21,6 +31,17 @@ on:
 jobs:
   do-cmd:
     if: '! (inputs.do-help || inputs.do-version)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        if: inputs.do-checkout-before
+      - run: make placeholder
+        if: inputs.do-make-target-before
+      - run: ${{ inputs.cmd }}
+  do-cmd-with-checkout:
+    if: >
+      '! (inputs.do-help || inputs.do-version)'
+      '&& inputs.'
     runs-on: ubuntu-latest
     steps:
       - run: ${{ inputs.cmd }}
