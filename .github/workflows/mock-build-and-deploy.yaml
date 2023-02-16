@@ -41,7 +41,7 @@ jobs:
     outputs:
       run-id: ${{ steps.action.outputs.run-id }}
     steps:
-      - uses: cawfeecake/actions-concurrency-queue@main
+      - uses: cawfeecake/action-queue-for-job-in-run@main
         id: action
         with:
           WORKFLOW_JOB_NAME: deploy-dev
@@ -59,7 +59,7 @@ jobs:
 ##   runs-on: ubuntu-latest
 #    uses: cawfeecake/my-reusable-workflows/.github/workflows/determine-to-queue.yaml@main
 ##   steps:
-##     - uses: cawfeecake/actions-concurrency-queue@main
+##     - uses: cawfeecake/action-queue-for-job-in-run@main
 ##       with:
 ##         RUN_ID: ${{ needs.determine-if-should-queue.outputs.previous-run }}
 ##         JOB_NAME: deploy-dev
@@ -84,7 +84,7 @@ jobs:
     outputs:
       run-id: ${{ steps.action.outputs.run-id }}
     steps:
-      - uses: cawfeecake/actions-concurrency-queue@main
+      - uses: cawfeecake/action-queue-for-job-in-run@main
         id: action
         with:
           WORKFLOW_JOB_NAME: deploy-int
@@ -103,7 +103,7 @@ jobs:
     outputs:
       run-id: ${{ steps.action.outputs.run-id }}
     steps:
-      - uses: cawfeecake/actions-concurrency-queue@main
+      - uses: cawfeecake/action-queue-for-job-in-run@main
         id: action
         with:
           WORKFLOW_JOB_NAME: deploy-prod
