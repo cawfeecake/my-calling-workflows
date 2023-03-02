@@ -1,0 +1,19 @@
+name: multiple-approvals
+
+on:
+  workflow_dispatch:
+
+jobs:
+  one:
+    environment: one
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'Hello'
+
+  two:
+    environment: two
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'World!'
