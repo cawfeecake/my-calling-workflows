@@ -1,0 +1,28 @@
+name: do-cmd-on-push
+
+on:
+  push:
+    branches:
+      - 'do/**'
+
+jobs:
+  pre:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::info::\$GITHUB_REF=\"$GITHUB_REF\""
+          echo "::info::\$GITHUB_SHA=\"$GITHUB_SHA\""
+          gh api -X GET repos/cawfeecake/my-calling-workflows/commits -f sha="$GITHUB_REF"
+  sleep:
+    needs: [ pre ]
+    uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
+    with:
+      TIME_TO_SLEEP: 120
+  post:
+    needs: [ sleep ]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::info::\$GITHUB_REF=\"$GITHUB_REF\""
+          echo "::info::\$GITHUB_SHA=\"$GITHUB_SHA\""
+          gh api -X GET repos/cawfeecake/my-calling-workflows/commits -f sha="$GITHUB_REF"
