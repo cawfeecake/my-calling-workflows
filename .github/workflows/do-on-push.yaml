@@ -13,6 +13,8 @@ jobs:
           echo "::info::\$GITHUB_REF=\"$GITHUB_REF\""
           echo "::info::\$GITHUB_SHA=\"$GITHUB_SHA\""
           gh api -X GET repos/cawfeecake/my-calling-workflows/commits -f sha="$GITHUB_REF"
+        env:
+          GH_TOKEN: ${{ github.token }}
   sleep:
     needs: [ pre ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
@@ -26,3 +28,5 @@ jobs:
           echo "::info::\$GITHUB_REF=\"$GITHUB_REF\""
           echo "::info::\$GITHUB_SHA=\"$GITHUB_SHA\""
           gh api -X GET repos/cawfeecake/my-calling-workflows/commits -f sha="$GITHUB_REF"
+        env:
+          GH_TOKEN: ${{ github.token }}
