@@ -19,7 +19,7 @@ jobs:
     needs: [ pre ]
     uses: cawfeecake/my-reusable-workflows/.github/workflows/sleep.yaml@main
     with:
-      TIME_TO_SLEEP: 120
+      TIME_TO_SLEEP: 30
   post:
     needs: [ sleep ]
     runs-on: ubuntu-latest
