@@ -30,3 +30,6 @@ jobs:
           gh api -X GET repos/cawfeecake/my-calling-workflows/commits -f sha="$GITHUB_REF"
         env:
           GH_TOKEN: ${{ github.token }}
+      - uses: action/checkout@v3
+      - run: |
+          git log --stat | head -32
