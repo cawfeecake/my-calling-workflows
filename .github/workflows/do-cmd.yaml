@@ -11,12 +11,12 @@ on:
         description: whether to do a checkout of this repo before running command
         type: boolean
         required: false
-        default: true
+        default: false
       do-make-target-before:
         description: whether to run the "before" make target before running command
         type: boolean
         required: false
-        default: true
+        default: false
       do-help:
         description: whether to run the command with --help flag
         type: boolean
