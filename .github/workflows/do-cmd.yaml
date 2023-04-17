@@ -44,6 +44,11 @@ jobs:
       - run: make before
         if: inputs.do-make-target-before
       - run: ${{ inputs.cmd }}
+      - run: |
+          title='The output'
+          echo "::[group]::$title"
+          echo 'Hello World!'
+          echo '::[endgroup]::'
   do-help:
     if: inputs.do-help
     runs-on: ubuntu-latest
