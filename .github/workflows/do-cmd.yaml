@@ -1,5 +1,7 @@
 name: do-cmd
 
+run-name: [${{ inputs.id }}] do-cmd
+
 on:
   workflow_dispatch:
     inputs:
