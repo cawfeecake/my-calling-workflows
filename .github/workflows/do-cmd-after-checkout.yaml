@@ -7,12 +7,19 @@ on:
         description: what command to run
         type: string
         required: true
+      repo:
+        description: which repo to pull down
+        type: string
+        required: false
+        default: ${{ github.repository }}
 
 jobs:
   do-cmd:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.repo }}
 
       - name: Show git DAG before anything
         run: git log --oneline --decorate --graph --all
