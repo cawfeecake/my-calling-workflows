@@ -1,0 +1,23 @@
+name: do-cmd-after-checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+      cmd:
+        description: what command to run
+        type: string
+        required: true
+
+jobs:
+  do-cmd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Show git DAG before anything
+        run: git log --oneline --decorate --graph --all
+
+      - run: ${{ inputs.cmd }}
+
+      - name: Show git DAG after everything
+        run: git log --oneline --decorate --graph --all
