@@ -45,7 +45,7 @@ jobs:
         if: inputs.do-make-target-before
       - run: ${{ inputs.cmd }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.X_REPO_TOKEN }}
       - run: |
           title='The output'
           echo "::[group]::$title"
